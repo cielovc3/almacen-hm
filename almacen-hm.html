@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>H&M - Sistema de Gestión de Almacén</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body{font-family:'Inter',sans-serif}
+    .hm-red{background-color:#CC0000}
+    .hm-red-text{color:#CC0000}
+    .hm-logo{font-weight:700;font-size:2.5rem;letter-spacing:-.05em}
+    .fade-in{animation:fadeIn .5s ease-in}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .pulse-animation{animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+    .scanner-animation{animation:scanLine 2s infinite}
+    @keyframes scanLine{0%{transform:translateY(-100%)}100%{transform:translateY(100%)}}
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- ========= Bienvenida ========= -->
+  <div id="welcome-screen" class="screen min-h-screen flex flex-col justify-center items-center p-6 bg-gradient-to-br from-white to-gray-50">
+    <div class="text-center max-w-lg w-full">
+
+      <!-- Logo H&M (círculo y 'Warehouse Management' eliminados) -->
+      <div class="mb-12 text-center">
+        <div class="hm-logo hm-red-text text-6xl mb-2 font-black tracking-wider">H&amp;M</div>
+        <!-- Si quieres un subtítulo, descomenta lo de abajo -->
+        <!-- <p class="text-gray-500 text-sm">Textiles H&amp;M</p> -->
+      </div>
+
+      <!-- Imagen decorativa (la dejo tal cual) -->
+      <div class="mb-10 relative">
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+          <svg class="w-56 h-36 mx-auto" viewBox="0 0 240 140">
+            <rect x="10" y="25" width="50" height="90" fill="#CC0000" rx="8" opacity="0.9"/>
+            <rect x="50" y="15" width="50" height="90" fill="#FF6B6B" rx="8" opacity="0.8"/>
+            <rect x="90" y="30" width="50" height="90" fill="#4A5568" rx="8" opacity="0.7"/>
+            <rect x="130" y="20" width="50" height="90" fill="#2D3748" rx="8" opacity="0.6"/>
+            <rect x="170" y="25" width="50" height="90" fill="#E2E8F0" rx="8" opacity="0.8"/>
+          </svg>
+        </div>
+      </div>
+
+      <h1 class="text-5xl font-bold text-gray-800 mb-3">¡Bienvenido!</h1>
+      <p class="text-xl text-gray-600 mb-10 font-medium">Sistema de Gestión de Almacén Textil</p>
+
+      <div class="space-y-4">
+        <button onclick="showScreen('register-screen')" class="w-full hm-red text-white py-5 px-8 rounded-xl font-bold text-xl hover:bg-red-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+          Regístrate
+        </button>
+        <button onclick="showScreen('login-screen')" class="w-full border-2 border-gray-300 text-gray-700 py-5 px-8 rounded-xl font-bold text-xl hover:bg-gray-100 hover:border-gray-400 transition-all duration-300">
+          Ya tengo una cuenta
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= Registro ========= -->
+  <div id="register-screen" class="screen hidden min-h-screen flex flex-col justify-center items-center p-6">
+    <div class="bg-white rounded-xl shadow-lg p-8 max-w-md w-full">
+      <div class="text-center mb-8">
+        <div class="hm-logo hm-red-text text-2xl mb-4">H&amp;M</div>
+        <h2 class="text-2xl font-bold text-gray-800">Crear Cuenta</h2>
+        <p class="text-gray-600">Registro de empleado</p>
+      </div>
+
+      <div class="space-y-4">
+        <div><label class="block text-sm font-medium text-gray-700 mb-2">Nombre completo</label>
+          <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" placeholder="Tu nombre completo"></div>
+        <div><label class="block text-sm font-medium text-gray-700 mb-2">ID de empleado</label>
+          <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" placeholder="ID de empleado"></div>
+        <div><label class="block text-sm font-medium text-gray-700 mb-2">Contraseña</label>
+          <input type="password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" placeholder="Crear contraseña"></div>
+
+        <button onclick="showScreen('login-screen')" class="w-full hm-red text-white py-3 px-6 rounded-lg font-semibold hover:bg-red-700 transition-colors">Crear Cuenta</button>
+        <button onclick="showScreen('welcome-screen')" class="w-full text-gray-600 py-2 hover:text-gray-800 transition-colors">← Volver</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= Login ========= -->
+  <div id="login-screen" class="screen hidden min-h-screen flex flex-col justify-center items-center p-6">
+    <div class="bg-white rounded-xl shadow-lg p-8 max-w-md w-full">
+      <div class="text-center mb-8">
+        <div class="hm-logo hm-red-text text-2xl mb-4">H&amp;M</div>
+        <div class="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
+          <svg class="w-8 h-8 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800">Iniciar Sesión</h2>
+        <p class="text-gray-600">Acceso de empleado</p>
+      </div>
+
+      <div class="space-y-4">
+        <div><label class="block text-sm font-medium text-gray-700 mb-2">Usuario</label>
+          <input type="text" id="username" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" placeholder="ID de empleado"></div>
+        <div><label class="block text-sm font-medium text-gray-700 mb-2">Contraseña</label>
+          <input type="password" id="password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" placeholder="Tu contraseña"></div>
+
+        <button onclick="login()" class="w-full hm-red text-white py-3 px-6 rounded-lg font-semibold hover:bg-red-700 transition-colors">Iniciar Sesión</button>
+        <button onclick="showScreen('welcome-screen')" class="w-full text-gray-600 py-2 hover:text-gray-800 transition-colors">← Volver</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= Nuevo ingreso ========= -->
+  <div id="new-entry-screen" class="screen hidden min-h-screen bg-white">
+    <div class="p-6">
+      <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">Nuevo ingreso</h1>
+        <div class="hm-red-text font-bold text-lg">H&amp;M</div>
+      </div>
+
+      <div class="max-w-2xl mx-auto">
+        <div class="text-center mb-8">
+          <svg class="w-24 h-24 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+          </svg>
+          <p class="text-gray-600">Selecciona una opción para comenzar el registro de materiales</p>
+        </div>
+
+        <button onclick="showScreen('method-selection-screen')" class="w-full hm-red text-white py-6 px-8 rounded-xl font-semibold text-xl hover:bg-red-700 transition-colors shadow-lg">Agregar nuevo material</button>
+        <button onclick="logout()" class="w-full mt-4 text-gray-600 py-3 hover:text-gray-800 transition-colors">Cerrar sesión</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= Método ========= -->
+  <div id="method-selection-screen" class="screen hidden min-h-screen bg-white">
+    <div class="p-6">
+      <div class="flex justify-between items-center mb-8">
+        <button onclick="showScreen('new-entry-screen')" class="text-gray-600 hover:text-gray-800">← Volver</button>
+        <div class="hm-red-text font-bold text-lg">H&amp;M</div>
+      </div>
+
+      <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-800 text-center mb-8">Selecciona el método de registro</h1>
+
+        <div class="grid md:grid-cols-2 gap-8">
+          <!-- Con código -->
+          <div class="bg-white border-2 border-gray-200 rounded-xl p-8 hover:border-red-300 transition-colors cursor-pointer" onclick="showBarcodeScanner()">
+            <div class="text-center">
+              <div class="w-20 h-20 hm-red rounded-full mx-auto mb-6 flex items-center justify-center">
+                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h2M4 4h5m0 0v5m0 0h5m0 0v5"/>
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold text-gray-800 mb-4">Con código de barras</h3>
+              <p class="text-gray-600 mb-6">Escanea el código para identificar automáticamente el material</p>
+              <button class="w-full hm-red text-white py-3 px-6 rounded-lg font-semibold hover:bg-red-700 transition-colors">Escanear código / Tomar foto</button>
+            </div>
+          </div>
+
+          <!-- Sin código -->
+          <div class="bg-white border-2 border-gray-200 rounded-xl p-8 hover:border-red-300 transition-colors cursor-pointer" onclick="showManualEntry()">
+            <div class="text-center">
+              <div class="w-20 h-20 bg-gray-600 rounded-full mx-auto mb-6 flex items-center justify-center">
+                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold text-gray-800 mb-4">Sin código de barras</h3>
+              <p class="text-gray-600 mb-6">Ingresa manualmente la información del material</p>
+              <button class="w-full bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-700 transition-colors">Ingresar manualmente</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= Escáner ========= -->
+  <div id="barcode-scanner-screen" class="screen hidden min-h-screen bg-white">
+    <div class="p-6">
+      <div class="flex justify-between items-center mb-8">
+        <button onclick="showScreen('method-selection-screen')" class="text-gray-600 hover:text-gray-800">← Volver</button>
+        <div class="hm-red-text font-bold text-lg">H&amp;M</div>
+      </div>
+
+      <div class="max-w-md mx-auto text-center">
+        <h1 class="text-2xl font-bold text-gray-800 mb-8">Escanear código de barras</h1>
+
+        <div class="relative bg-gray-900 rounded-xl p-8 mb-6">
+          <div class="w-64 h-48 bg-gray-800 rounded-lg mx-auto relative overflow-hidden">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <svg class="w-16 h-16 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </div>
+            <div id="scan-line" class="hidden absolute w-full h-1 hm-red scanner-animation"></div>
+          </div>
+          <p class="text-white mt-4">Apunta la cámara hacia el código de barras</p>
+        </div>
+
+        <div id="scanning-message" class="hidden mb-6">
+          <div class="pulse-animation"><p class="text-lg font-semibold hm-red-text">Escaneando código...</p></div>
+        </div>
+
+        <button onclick="simulateBarcodeScan()" class="w-full hm-red text-white py-4 px-6 rounded-lg font-semibold hover:bg-red-700 transition-colors">Simular escaneo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= Ingreso manual ========= -->
+  <div id="manual-entry-screen" class="screen hidden min-h-screen bg-white">
+    <div class="p-6">
+      <div class="flex justify-between items-center mb-8">
+        <button onclick="showScreen('method-selection-screen')" class="text-gray-600 hover:text-gray-800">← Volver</button>
+        <div class="hm-red-text font-bold text-lg">H&amp;M</div>
+      </div>
+
+      <div class="max-w-2xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-800 mb-8">Ingreso manual de material</h1>
+
+        <form class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de material</label>
+            <select id="material-type" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+              <option value="">Seleccionar material</option>
+              <option value="algodon">Algodón</option><option value="lino">Lino</option><option value="lana">Lana</option>
+              <option value="seda">Seda</option><option value="poliester">Poliéster</option><option value="denim">Denim</option>
+              <option value="botones">Botones</option><option value="cremalleras">Cremalleras</option><option value="hilos">Hilos</option>
+              <option value="accesorios">Accesorios</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
+            <select id="category" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+              <option value="">Seleccionar categoría</option>
+              <option value="hombre">Hombre</option><option value="mujer">Mujer</option>
+              <option value="ninos">Niños</option><option value="hogar">Hogar</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Ubicación asignada</label>
+            <select id="location" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+              <option value="">Seleccionar ubicación</option>
+              <option value="zona-a-est-14">Zona A, Estante 14</option>
+              <option value="zona-a-est-15">Zona A, Estante 15</option>
+              <option value="zona-b-est-8">Zona B, Estante 8</option>
+              <option value="zona-b-est-9">Zona B, Estante 9</option>
+              <option value="zona-c-est-22">Zona C, Estante 22</option>
+              <option value="zona-c-est-23">Zona C, Estante 23</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Unidades ingresadas</label>
+            <input type="number" id="units" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" placeholder="Número de unidades" min="1">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Observaciones</label>
+            <textarea id="observations" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" rows="3" placeholder="Observaciones adicionales (opcional)"></textarea>
+          </div>
+
+          <button type="button" onclick="processManualEntry()" class="w-full hm-red text-white py-4 px-6 rounded-lg font-semibold hover:bg-red-700 transition-colors">Continuar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= Detalle ========= -->
+  <div id="material-detail-screen" class="screen hidden min-h-screen bg-white">
+    <div class="p-6">
+      <div class="flex justify-between items-center mb-8">
+        <button onclick="goBackToMethod()" class="text-gray-600 hover:text-gray-800">← Volver</button>
+        <div class="hm-red-text font-bold text-lg">H&amp;M</div>
+      </div>
+
+      <div class="max-w-2xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-800 mb-8">Detalle del material</h1>
+
+        <div class="bg-gray-50 rounded-xl p-8 mb-8">
+          <div class="grid md:grid-cols-2 gap-6">
+            <div><h3 class="text-sm font-medium text-gray-500 mb-2">Material</h3><p id="detail-material" class="text-xl font-semibold text-gray-800">Algodón</p></div>
+            <div><h3 class="text-sm font-medium text-gray-500 mb-2">Categoría</h3><p id="detail-category" class="text-xl font-semibold text-gray-800">Mujer</p></div>
+            <div><h3 class="text-sm font-medium text-gray-500 mb-2">Ubicación</h3><p id="detail-location" class="text-xl font-semibold text-gray-800">Zona A, Estante 14</p></div>
+            <div><h3 class="text-sm font-medium text-gray-500 mb-2">Unidades a ingresar</h3><p id="detail-units" class="text-xl font-semibold hm-red-text">20 unidades</p></div>
+            <div class="md:col-span-2"><h3 class="text-sm font-medium text-gray-500 mb-2">Stock actual</h3><p id="detail-current-stock" class="text-lg text-gray-800">30 unidades</p></div>
+            <div class="md:col-span-2"><h3 class="text-sm font-medium text-gray-500 mb-2">Capacidad restante</h3><p id="detail-remaining-capacity" class="text-lg text-gray-800">10 unidades</p></div>
+          </div>
+
+          <div id="detail-observations" class="mt-6 hidden">
+            <h3 class="text-sm font-medium text-gray-500 mb-2">Observaciones</h3>
+            <p class="text-gray-800"></p>
+          </div>
+        </div>
+
+        <button onclick="addRecord()" class="w-full hm-red text-white py-4 px-6 rounded-lg font-semibold hover:bg-red-700 transition-colors">Añadir registro</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= Confirmación ========= -->
+  <div id="confirmation-screen" class="screen hidden min-h-screen bg-white">
+    <div class="p-6">
+      <div class="flex justify-end items-center mb-8">
+        <div class="hm-red-text font-bold text-lg">H&amp;M</div>
+      </div>
+
+      <div class="max-w-2xl mx-auto text-center">
+        <div class="w-24 h-24 hm-red rounded-full mx-auto mb-8 flex items-center justify-center">
+          <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+        </div>
+
+        <h1 class="text-3xl font-bold text-gray-800 mb-4">Registro actualizado</h1>
+        <p class="text-gray-600 mb-8">El material ha sido registrado correctamente en el sistema</p>
+
+        <div class="bg-gray-50 rounded-xl p-8 mb-8">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Actualización del stock</h3>
+          <div class="space-y-2">
+            <p id="confirmation-stock" class="text-xl font-bold hm-red-text">Stock actual: 50 u</p>
+            <p id="confirmation-capacity" class="text-lg text-gray-600">Capacidad restante: 0 u</p>
+          </div>
+        </div>
+
+        <button onclick="finishProcess()" class="w-full hm-red text-white py-4 px-6 rounded-lg font-semibold hover:bg-red-700 transition-colors mb-4">Finalizar</button>
+        <button onclick="showScreen('new-entry-screen')" class="w-full border-2 border-gray-300 text-gray-700 py-4 px-6 rounded-lg font-semibold hover:bg-gray-100 transition-colors">Agregar otro material</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= Modal final ========= -->
+  <div id="final-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-6 z-50">
+    <div class="bg-white rounded-xl p-8 max-w-md w-full text-center fade-in">
+      <div class="w-16 h-16 hm-red rounded-full mx-auto mb-6 flex items-center justify-center">
+        <div class="hm-red-text font-bold text-lg">H&amp;M</div>
+      </div>
+      <h3 class="text-xl font-bold text-gray-800 mb-4">Registro añadido correctamente</h3>
+      <p class="text-gray-600 mb-6">El material ha sido registrado exitosamente en el sistema de almacén H&amp;M</p>
+      <button onclick="closeFinalModal()" class="w-full hm-red text-white py-3 px-6 rounded-lg font-semibold hover:bg-red-700 transition-colors">Continuar</button>
+    </div>
+  </div>
+
+  <script>
+    let currentMethod=''; let materialData={};
+
+    function showScreen(id){
+      document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
+      const el=document.getElementById(id);
+      el.classList.remove('hidden'); el.classList.add('fade-in');
+    }
+
+    function login(){
+      const u=document.getElementById('username').value;
+      const p=document.getElementById('password').value;
+      if(u&&p){showScreen('new-entry-screen');}else{alert('Por favor, ingresa tu usuario y contraseña');}
+    }
+    function logout(){
+      showScreen('welcome-screen');
+      document.getElementById('username').value=''; document.getElementById('password').value='';
+    }
+    function showBarcodeScanner(){currentMethod='barcode';showScreen('barcode-scanner-screen');}
+    function showManualEntry(){currentMethod='manual';showScreen('manual-entry-screen');}
+
+    function simulateBarcodeScan(){
+      document.getElementById('scanning-message').classList.remove('hidden');
+      document.getElementById('scan-line').classList.remove('hidden');
+      setTimeout(()=>{
+        materialData={material:'Algodón',category:'Mujer',location:'Zona A, Estante 14',units:20,currentStock:30,remainingCapacity:10,observations:''};
+        showMaterialDetail();
+      },3000);
+    }
+
+    function processManualEntry(){
+      const mt=document.getElementById('material-type').value;
+      const cat=document.getElementById('category').value;
+      const loc=document.getElementById('location').value;
+      const units=document.getElementById('units').value;
+      const obs=document.getElementById('observations').value;
+      if(!mt||!cat||!loc||!units){alert('Por favor, completa todos los campos obligatorios');return;}
+
+      const namesM={algodon:'Algodón',lino:'Lino',lana:'Lana',seda:'Seda',poliester:'Poliéster',denim:'Denim',botones:'Botones',cremalleras:'Cremalleras',hilos:'Hilos',accesorios:'Accesorios'};
+      const namesC={hombre:'Hombre',mujer:'Mujer',ninos:'Niños',hogar:'Hogar'};
+      const namesL={'zona-a-est-14':'Zona A, Estante 14','zona-a-est-15':'Zona A, Estante 15','zona-b-est-8':'Zona B, Estante 8','zona-b-est-9':'Zona B, Estante 9','zona-c-est-22':'Zona C, Estante 22','zona-c-est-23':'Zona C, Estante 23'};
+
+      materialData={
+        material:namesM[mt],category:namesC[cat],location:namesL[loc],
+        units:parseInt(units,10),
+        currentStock:Math.floor(Math.random()*50)+10,
+        remainingCapacity:Math.floor(Math.random()*20)+5,
+        observations:obs
+      };
+      showMaterialDetail();
+    }
+
+    function showMaterialDetail(){
+      document.getElementById('detail-material').textContent=materialData.material;
+      document.getElementById('detail-category').textContent=materialData.category;
+      document.getElementById('detail-location').textContent=materialData.location;
+      document.getElementById('detail-units').textContent=materialData.units+' unidades';
+      document.getElementById('detail-current-stock').textContent=materialData.currentStock+' unidades';
+      document.getElementById('detail-remaining-capacity').textContent=materialData.remainingCapacity+' unidades';
+
+      const obsWrap=document.getElementById('detail-observations');
+      if(materialData.observations){obsWrap.classList.remove('hidden');obsWrap.querySelector('p').textContent=materialData.observations;}
+      else{obsWrap.classList.add('hidden');}
+
+      showScreen('material-detail-screen');
+    }
+
+    function goBackToMethod(){ showScreen(currentMethod==='barcode'?'barcode-scanner-screen':'manual-entry-screen'); }
+
+    function addRecord(){
+      const newStock=materialData.currentStock+materialData.units;
+      const newCap=Math.max(0,materialData.remainingCapacity-materialData.units);
+      document.getElementById('confirmation-stock').textContent=`Stock actual: ${newStock} u`;
+      document.getElementById('confirmation-capacity').textContent=`Capacidad restante: ${newCap} u`;
+      showScreen('confirmation-screen');
+    }
+
+    function finishProcess(){ document.getElementById('final-modal').classList.remove('hidden'); }
+    function closeFinalModal(){
+      document.getElementById('final-modal').classList.add('hidden');
+      ['material-type','category','location','units','observations'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
+      document.getElementById('scanning-message').classList.add('hidden');
+      document.getElementById('scan-line').classList.add('hidden');
+      showScreen('new-entry-screen');
+    }
+
+    document.addEventListener('DOMContentLoaded',()=>showScreen('welcome-screen'));
+  </script>
+</body>
+</html>
